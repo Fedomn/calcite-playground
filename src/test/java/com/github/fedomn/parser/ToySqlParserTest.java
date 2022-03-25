@@ -1,4 +1,4 @@
-package com.github.fedomn;
+package com.github.fedomn.parser;
 
 import org.apache.calcite.sql.dialect.MysqlSqlDialect;
 import org.apache.calcite.sql.parser.SqlParseException;
@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.calcite.config.Lex.MYSQL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class SqlParserToyTest {
+class ToySqlParserTest {
 
     @Test
     void parse_query_success() throws SqlParseException {
