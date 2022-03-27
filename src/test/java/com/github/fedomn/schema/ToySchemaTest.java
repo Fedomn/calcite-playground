@@ -16,8 +16,7 @@ public class ToySchemaTest {
 
     @Test
     void scalar_test() throws SQLException {
-        Connection connection = ToyConnection.INSTANCE.create("model.json");
-        Statement statement = connection.createStatement();
+        Statement statement = prepareStatement();
         ResultSet resultSet = statement.executeQuery("select 2*55");
         resultSet.next();
 
@@ -26,8 +25,7 @@ public class ToySchemaTest {
 
     @Test
     void basic_test() throws SQLException {
-        Connection connection = ToyConnection.INSTANCE.create("model.json");
-        Statement statement = connection.createStatement();
+        Statement statement = prepareStatement();
         ResultSet resultSet = statement.executeQuery("select * from \"user\"");
 
         final List<String> lines = new ArrayList<>();
@@ -35,6 +33,11 @@ public class ToySchemaTest {
         assertEquals("[id=1; name=u1, id=2; name=u2, id=3; name=u3]", lines.toString());
     }
 
+
+    private Statement prepareStatement() throws SQLException {
+        Connection connection = ToyConnection.INSTANCE.create("model.json");
+        return connection.createStatement();
+    }
 
     private static void collect(List<String> result, ResultSet resultSet)
             throws SQLException {
