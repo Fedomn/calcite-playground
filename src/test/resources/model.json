@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "defaultSchema": "toys",
+  "schemas": [
+    {
+      "name": "toys",
+      "type": "custom",
+      "factory": "com.github.fedomn.schema.ToySchemaFactory",
+      "operand": {
+        "tables": [
+          {
+            "ddl": "user.json",
+            "data": "user.txt"
+          },
+          {
+            "ddl": "role.json",
+            "data": "role.txt"
+          }
+        ]
+      }
+    }
+  ]
+}
