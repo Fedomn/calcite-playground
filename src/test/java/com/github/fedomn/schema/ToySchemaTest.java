@@ -26,11 +26,11 @@ public class ToySchemaTest {
     @Test
     void basic_test() throws SQLException {
         Statement statement = prepareStatement();
-        ResultSet resultSet = statement.executeQuery("select * from t_users");
+        ResultSet resultSet = statement.executeQuery("select * from t_users where id=1");
 
         final List<String> lines = new ArrayList<>();
         collect(lines, resultSet);
-        assertEquals("[id=1; name=u1, id=2; name=u2, id=3; name=u3]", lines.toString());
+        assertEquals("[id=1; name=u1; role_id=1]", lines.toString());
     }
 
     @Test
@@ -41,6 +41,20 @@ public class ToySchemaTest {
         final List<String> lines = new ArrayList<>();
         collect(lines, resultSet);
         assertEquals("[id=1; name=u1]", lines.toString());
+    }
+
+    @Test
+    void join_test() throws SQLException {
+        Statement statement = prepareStatement();
+        ResultSet resultSet = statement.executeQuery("""
+                select u.* from t_users u inner join t_roles r 
+                on u.role_id = r.id
+                where r.id = 2
+                """);
+
+        final List<String> lines = new ArrayList<>();
+        collect(lines, resultSet);
+        assertEquals("[id=2; name=u2; role_id=2]", lines.toString());
     }
 
 
