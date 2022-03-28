@@ -19,6 +19,7 @@ public class ToyConnection {
         info.put(CalciteConnectionProperty.UNQUOTED_CASING.camelName(), Casing.UNCHANGED.toString());
         info.put(CalciteConnectionProperty.QUOTED_CASING.camelName(), Casing.UNCHANGED.toString());
         info.put(CalciteConnectionProperty.LEX.camelName(), Lex.MYSQL.toString());
+        info.put(CalciteConnectionProperty.TOPDOWN_OPT.camelName(), Boolean.TRUE.toString());
         String path = Util.filePath(model);
         info.put("model", path);
         return DriverManager.getConnection("jdbc:calcite:", info);
