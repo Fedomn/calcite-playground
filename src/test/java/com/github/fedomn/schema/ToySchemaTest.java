@@ -26,11 +26,21 @@ public class ToySchemaTest {
     @Test
     void basic_test() throws SQLException {
         Statement statement = prepareStatement();
-        ResultSet resultSet = statement.executeQuery("select * from \"user\"");
+        ResultSet resultSet = statement.executeQuery("select * from t_users");
 
         final List<String> lines = new ArrayList<>();
         collect(lines, resultSet);
         assertEquals("[id=1; name=u1, id=2; name=u2, id=3; name=u3]", lines.toString());
+    }
+
+    @Test
+    void project_test() throws SQLException {
+        Statement statement = prepareStatement();
+        ResultSet resultSet = statement.executeQuery("select u.id, u.name from t_users u where u.id = 1");
+
+        final List<String> lines = new ArrayList<>();
+        collect(lines, resultSet);
+        assertEquals("[id=1; name=u1]", lines.toString());
     }
 
 

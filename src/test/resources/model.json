@@ -9,12 +9,12 @@
       "operand": {
         "tables": [
           {
-            "ddl": "user.json",
-            "data": "user.txt"
+            "ddl": "t_users.json",
+            "data": "t_users.txt"
           },
           {
-            "ddl": "role.json",
-            "data": "role.txt"
+            "ddl": "t_roles.json",
+            "data": "t_roles.txt"
           }
         ]
       }

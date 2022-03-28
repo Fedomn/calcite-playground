@@ -7,7 +7,11 @@
     {
       "name": "name",
       "type": "varchar"
+    },
+    {
+      "name": "role_id",
+      "type": "integer"
     }
   ],
-  "name": "role"
+  "name": "t_users"
 }

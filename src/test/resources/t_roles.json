@@ -9,5 +9,5 @@
       "type": "varchar"
     }
   ],
-  "name": "user"
+  "name": "t_roles"
 }
