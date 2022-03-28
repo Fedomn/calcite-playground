@@ -1,4 +1,4 @@
-package com.github.fedomn.schema;
+package com.github.fedomn.schema.table;
 
 public class ToyColumn {
     public String name;
