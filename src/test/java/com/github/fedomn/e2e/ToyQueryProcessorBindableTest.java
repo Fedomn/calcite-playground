@@ -127,15 +127,15 @@ class ToyQueryProcessorBindableTest {
         // 9. Convert the valid AST into a logical plan
         RelNode logicalPlan = relConverter.convertQuery(validNode, false, true).rel;
         // Display the logical plan
-        String logicalPlanExplainText = RelOptUtil.dumpPlan("[Logical plan]", logicalPlan, SqlExplainFormat.TEXT, SqlExplainLevel.NON_COST_ATTRIBUTES);
+        String logicalPlanExplainText = RelOptUtil.dumpPlan("[Logical plan]", logicalPlan, SqlExplainFormat.TEXT, SqlExplainLevel.EXPPLAN_ATTRIBUTES);
         assertEquals("""
                 [Logical plan]
-                LogicalSort(sort0=[$3], dir0=[DESC], fetch=[10]), id = 8
-                  LogicalProject(id=[$0], name=[$1], role_id=[$2], id0=[$3]), id = 7
-                    LogicalFilter(condition=[>=($3, 2)]), id = 6
-                      LogicalJoin(condition=[=($2, $3)], joinType=[inner]), id = 5
-                        LogicalTableScan(table=[[t_users]]), id = 1
-                        LogicalTableScan(table=[[t_roles]]), id = 3
+                LogicalSort(sort0=[$3], dir0=[DESC], fetch=[10])
+                  LogicalProject(id=[$0], name=[$1], role_id=[$2], id0=[$3])
+                    LogicalFilter(condition=[>=($3, 2)])
+                      LogicalJoin(condition=[=($2, $3)], joinType=[inner])
+                        LogicalTableScan(table=[[t_users]])
+                        LogicalTableScan(table=[[t_roles]])
                 """, logicalPlanExplainText);
 
         // 10. Initialize optimizer/planner with the necessary rules
@@ -154,15 +154,15 @@ class ToyQueryProcessorBindableTest {
         // 12. Start the optimization process to obtain the most efficient physical plan based on the provided rule set.
         var physicalPlan = (BindableRel) planner.findBestExp();
         // Display the physical plan
-        String physicalPlanExplainText = RelOptUtil.dumpPlan("[Physical plan]", physicalPlan, SqlExplainFormat.TEXT, SqlExplainLevel.NON_COST_ATTRIBUTES);
+        String physicalPlanExplainText = RelOptUtil.dumpPlan("[Physical plan]", physicalPlan, SqlExplainFormat.TEXT, SqlExplainLevel.EXPPLAN_ATTRIBUTES);
         assertEquals("""
                 [Physical plan]
-                BindableSort(sort0=[$3], dir0=[DESC], fetch=[10]), id = 47
-                  BindableProject(id=[$0], name=[$1], role_id=[$2], id0=[$3]), id = 46
-                    BindableJoin(condition=[=($2, $3)], joinType=[inner]), id = 45
-                      BindableTableScan(table=[[t_users]]), id = 21
-                      BindableFilter(condition=[>=($0, 2)]), id = 44
-                        BindableTableScan(table=[[t_roles]]), id = 23
+                BindableSort(sort0=[$3], dir0=[DESC], fetch=[10])
+                  BindableProject(id=[$0], name=[$1], role_id=[$2], id0=[$3])
+                    BindableJoin(condition=[=($2, $3)], joinType=[inner])
+                      BindableTableScan(table=[[t_users]])
+                      BindableFilter(condition=[>=($0, 2)])
+                        BindableTableScan(table=[[t_roles]])
                 """, physicalPlanExplainText);
 
         // 13. Run the executable plan using a context simply providing access to the schema

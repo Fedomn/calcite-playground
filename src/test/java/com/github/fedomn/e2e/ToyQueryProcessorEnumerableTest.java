@@ -127,15 +127,15 @@ class ToyQueryProcessorEnumerableTest {
         // 9. Convert the valid AST into a logical plan
         RelNode logicalPlan = relConverter.convertQuery(validNode, false, true).rel;
         // Display the logical plan
-        String logicalPlanExplainText = RelOptUtil.dumpPlan("[Logical plan]", logicalPlan, SqlExplainFormat.TEXT, SqlExplainLevel.NON_COST_ATTRIBUTES);
+        String logicalPlanExplainText = RelOptUtil.dumpPlan("[Logical plan]", logicalPlan, SqlExplainFormat.TEXT, SqlExplainLevel.EXPPLAN_ATTRIBUTES);
         assertEquals("""
                 [Logical plan]
-                LogicalSort(sort0=[$3], dir0=[DESC], fetch=[10]), id = 8
-                  LogicalProject(id=[$0], name=[$1], role_id=[$2], id0=[$3]), id = 7
-                    LogicalFilter(condition=[>=($3, 2)]), id = 6
-                      LogicalJoin(condition=[=($2, $3)], joinType=[inner]), id = 5
-                        LogicalTableScan(table=[[t_users]]), id = 1
-                        LogicalTableScan(table=[[t_roles]]), id = 3
+                LogicalSort(sort0=[$3], dir0=[DESC], fetch=[10])
+                  LogicalProject(id=[$0], name=[$1], role_id=[$2], id0=[$3])
+                    LogicalFilter(condition=[>=($3, 2)])
+                      LogicalJoin(condition=[=($2, $3)], joinType=[inner])
+                        LogicalTableScan(table=[[t_users]])
+                        LogicalTableScan(table=[[t_roles]])
                 """, logicalPlanExplainText);
 
         // 10. Initialize optimizer/planner with the necessary rules
@@ -157,15 +157,15 @@ class ToyQueryProcessorEnumerableTest {
         // 12. Start the optimization process to obtain the most efficient physical plan based on the provided rule set.
         var physicalPlan = (EnumerableRel) planner.findBestExp();
         // Display the physical plan
-        String physicalPlanExplainText = RelOptUtil.dumpPlan("[Physical plan]", physicalPlan, SqlExplainFormat.TEXT, SqlExplainLevel.NON_COST_ATTRIBUTES);
+        String physicalPlanExplainText = RelOptUtil.dumpPlan("[Physical plan]", physicalPlan, SqlExplainFormat.TEXT, SqlExplainLevel.EXPPLAN_ATTRIBUTES);
         assertEquals("""
                 [Physical plan]
-                EnumerableLimitSort(sort0=[$3], dir0=[DESC], fetch=[10]), id = 45
-                  EnumerableCalc(expr#0..4=[{inputs}], proj#0..3=[{exprs}]), id = 44
-                    EnumerableHashJoin(condition=[=($2, $3)], joinType=[inner]), id = 43
-                      EnumerableTableScan(table=[[t_users]]), id = 21
-                      EnumerableCalc(expr#0..1=[{inputs}], expr#2=[2], expr#3=[>=($t0, $t2)], proj#0..1=[{exprs}], $condition=[$t3]), id = 42
-                        EnumerableTableScan(table=[[t_roles]]), id = 23
+                EnumerableLimitSort(sort0=[$3], dir0=[DESC], fetch=[10])
+                  EnumerableCalc(expr#0..4=[{inputs}], proj#0..3=[{exprs}])
+                    EnumerableHashJoin(condition=[=($2, $3)], joinType=[inner])
+                      EnumerableTableScan(table=[[t_users]])
+                      EnumerableCalc(expr#0..1=[{inputs}], expr#2=[2], expr#3=[>=($t0, $t2)], proj#0..1=[{exprs}], $condition=[$t3])
+                        EnumerableTableScan(table=[[t_roles]])
                 """, physicalPlanExplainText);
 
         // 13. Run the executable plan using a context simply providing access to the schema
