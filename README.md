@@ -4,6 +4,11 @@ jdk: 17.0.2-open
 
 Calcite playground for learning purposes includes some testing code.
 
+### My Personal Resources
+
+- [Calcite tutorial at BOSS 2021 完成的demo](https://github.com/Fedomn/calcite-tutorial)
+- [Calcite Blog Tags](https://frankma.netlify.app/tags/calcite/)
+
 ### English Resources
 
 Official
@@ -32,7 +37,3 @@ Others
 - [ ] [calcite物化视图详解](https://zhuanlan.zhihu.com/p/484146629)
 - [ ] [Calcite 启发式 Planner (HepPlanner) (一系列calcite分析文章)](https://zhuanlan.zhihu.com/p/61661909)
 
-### My Personal Resources
-
-- [Calcite tutorial at BOSS 2021 完成的demo](https://github.com/Fedomn/calcite-tutorial)
-- [Calcite Blog Tags](https://frankma.netlify.app/tags/calcite/)
