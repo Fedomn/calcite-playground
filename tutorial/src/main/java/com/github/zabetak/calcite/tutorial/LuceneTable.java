@@ -15,14 +15,22 @@ package com.github.zabetak.calcite.tutorial;/*
  * limitations under the License.
  */
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import org.apache.calcite.DataContext;
+import org.apache.calcite.linq4j.Enumerable;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
+import org.apache.calcite.rel.type.RelDataTypeField;
+import org.apache.calcite.schema.ScannableTable;
 import org.apache.calcite.schema.impl.AbstractTable;
+import org.apache.calcite.sql.type.SqlTypeName;
 
 /**
  * Table representing an Apache Lucene index.
  */
-public class LuceneTable extends AbstractTable {
+public class LuceneTable extends AbstractTable implements ScannableTable {
+
   // TODO (Optional) implement the ScannableTable interface
   private final String indexPath;
   private final RelDataType dataType;
@@ -39,7 +47,18 @@ public class LuceneTable extends AbstractTable {
     return indexPath;
   }
 
-  @Override public RelDataType getRowType(final RelDataTypeFactory typeFactory) {
+  @Override
+  public RelDataType getRowType(final RelDataTypeFactory typeFactory) {
     return typeFactory.copyType(dataType);
+  }
+
+  @Override
+  public Enumerable<Object[]> scan(DataContext root) {
+    LinkedHashMap<String, SqlTypeName> fields = new LinkedHashMap<>();
+    for (RelDataTypeField f : dataType.getFieldList()) {
+      fields.put(f.getName(), f.getType().getSqlTypeName());
+    }
+    // "*:*" -> give me all results
+    return new LuceneEnumerable(indexPath, fields, "*:*");
   }
 }
