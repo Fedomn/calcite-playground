@@ -21,11 +21,15 @@ import com.github.zabetak.calcite.tutorial.indexer.TpchTable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Properties;
 import org.apache.calcite.DataContext;
 import org.apache.calcite.adapter.enumerable.EnumerableConvention;
+import org.apache.calcite.adapter.enumerable.EnumerableInterpretable;
 import org.apache.calcite.adapter.enumerable.EnumerableRel;
+import org.apache.calcite.adapter.enumerable.EnumerableRel.Prefer;
 import org.apache.calcite.adapter.enumerable.EnumerableRules;
 import org.apache.calcite.adapter.java.JavaTypeFactory;
 import org.apache.calcite.config.CalciteConnectionConfig;
@@ -45,6 +49,7 @@ import org.apache.calcite.rel.RelNode;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rex.RexBuilder;
+import org.apache.calcite.runtime.Bindable;
 import org.apache.calcite.schema.SchemaPlus;
 import org.apache.calcite.sql.SqlExplainFormat;
 import org.apache.calcite.sql.SqlExplainLevel;
@@ -164,11 +169,22 @@ public class LuceneQueryProcessor {
         RelOptUtil.dumpPlan("[Physical plan]", phyPlan, SqlExplainFormat.TEXT,
             SqlExplainLevel.NON_COST_ATTRIBUTES));
 
+    //-----------------------------step 4: PhysicalPlan to ExecutablePlan------------------------------------------------
+
     // TODO 18. Compile generated code and obtain the executable program
+    Bindable<Object[]> executablePlan = EnumerableInterpretable.toBindable(
+        new HashMap<>(),
+        null,
+        phyPlan,
+        Prefer.ARRAY);
+
+    long start = System.currentTimeMillis();
 
     // TODO 19. Run the program using a context simply providing access to the schema and print
-    // results
-    long start = System.currentTimeMillis();
+    for (Object[] row : executablePlan.bind(new SchemaOnlyDataContext(schema))) {
+      System.out.println(Arrays.toString(row));
+    }
+
     long finish = System.currentTimeMillis();
     System.out.println("Elapsed time " + (finish - start) + "ms");
   }
