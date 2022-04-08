@@ -152,6 +152,7 @@ public class LuceneQueryProcessor {
     RelOptPlanner planner = cluster.getPlanner();
     planner.addRule(CoreRules.FILTER_TO_CALC);
     planner.addRule(CoreRules.PROJECT_TO_CALC);
+    planner.addRule(CoreRules.FILTER_INTO_JOIN); // before-cost=4511rows, after-cost=2769rows
     planner.addRule(EnumerableRules.ENUMERABLE_SORT_RULE);
     planner.addRule(EnumerableRules.ENUMERABLE_CALC_RULE);
     planner.addRule(EnumerableRules.ENUMERABLE_JOIN_RULE);
@@ -170,7 +171,7 @@ public class LuceneQueryProcessor {
     // TODO 17. Display the physical plan
     System.out.println(
         RelOptUtil.dumpPlan("[Physical plan]", phyPlan, SqlExplainFormat.TEXT,
-            SqlExplainLevel.NON_COST_ATTRIBUTES));
+            SqlExplainLevel.ALL_ATTRIBUTES));
 
     //-----------------------------step 4: PhysicalPlan to ExecutablePlan------------------------------------------------
 
