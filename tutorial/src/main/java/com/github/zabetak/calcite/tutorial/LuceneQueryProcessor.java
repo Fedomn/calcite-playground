@@ -24,6 +24,9 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Properties;
 import org.apache.calcite.DataContext;
+import org.apache.calcite.adapter.enumerable.EnumerableConvention;
+import org.apache.calcite.adapter.enumerable.EnumerableRel;
+import org.apache.calcite.adapter.enumerable.EnumerableRules;
 import org.apache.calcite.adapter.java.JavaTypeFactory;
 import org.apache.calcite.config.CalciteConnectionConfig;
 import org.apache.calcite.config.CalciteConnectionConfigImpl;
@@ -68,7 +71,7 @@ public class LuceneQueryProcessor {
     }
     String sqlQuery = new String(Files.readAllBytes(Paths.get(args[0])), StandardCharsets.UTF_8);
 
-    //-----------------------------step 1------------------------------------------------
+    //-----------------------------step 1: SqlParser and SqlValidator------------------------------------------------
 
     // TODO 1. Create the root schema and type factory
     CalciteSchema schema = CalciteSchema.createRootSchema(false);
@@ -110,12 +113,12 @@ public class LuceneQueryProcessor {
     System.out.println("[Validated query]");
     System.out.println(validNode.toString());
 
-    //-----------------------------step 2------------------------------------------------
+    //-----------------------------step 2: use SqlToRelConverter to generate LogicalPlan------------------------------------------------
 
     // TODO 10. Create the optimization cluster to maintain planning information
-    RelOptPlanner planner = new VolcanoPlanner();
-    planner.addRelTraitDef(ConventionTraitDef.INSTANCE);
-    RelOptCluster cluster = RelOptCluster.create(planner, new RexBuilder(typeFactory));
+    RelOptPlanner volcanoPlanner = new VolcanoPlanner();
+    volcanoPlanner.addRelTraitDef(ConventionTraitDef.INSTANCE);
+    RelOptCluster cluster = RelOptCluster.create(volcanoPlanner, new RexBuilder(typeFactory));
 
     // TODO 11. Configure and instantiate the converter of the AST to Logical plan
     // - No view expansion (use NOOP_EXPANDER)
@@ -137,15 +140,29 @@ public class LuceneQueryProcessor {
         RelOptUtil.dumpPlan("[Logical plan]", logPlan, SqlExplainFormat.TEXT,
             SqlExplainLevel.NON_COST_ATTRIBUTES));
 
+    //-----------------------------step 3: LogicalPlan to PhysicalPlan------------------------------------------------
+
     // TODO 14. Initialize optimizer/planner with the necessary rules
+    RelOptPlanner planner = cluster.getPlanner();
+    planner.addRule(EnumerableRules.ENUMERABLE_SORT_RULE);
+    planner.addRule(EnumerableRules.ENUMERABLE_PROJECT_RULE);
+    planner.addRule(EnumerableRules.ENUMERABLE_FILTER_RULE);
+    planner.addRule(EnumerableRules.ENUMERABLE_JOIN_RULE);
+    planner.addRule(EnumerableRules.ENUMERABLE_TABLE_SCAN_RULE);
 
     // TODO 15. Define the type of the output plan (in this case we want a physical plan in
     // EnumerableContention)
+    logPlan = planner.changeTraits(logPlan,
+        logPlan.getTraitSet().replace(EnumerableConvention.INSTANCE));
+    planner.setRoot(logPlan);
 
     // TODO 16. Start the optimization process to obtain the most efficient physical plan based on
     // the provided rule set.
-
+    EnumerableRel phyPlan = (EnumerableRel) planner.findBestExp();
     // TODO 17. Display the physical plan
+    System.out.println(
+        RelOptUtil.dumpPlan("[Physical plan]", phyPlan, SqlExplainFormat.TEXT,
+            SqlExplainLevel.NON_COST_ATTRIBUTES));
 
     // TODO 18. Compile generated code and obtain the executable program
 
