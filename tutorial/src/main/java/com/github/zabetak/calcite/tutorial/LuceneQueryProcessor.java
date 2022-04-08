@@ -19,6 +19,8 @@ package com.github.zabetak.calcite.tutorial;
 import com.github.zabetak.calcite.tutorial.indexer.DatasetIndexer;
 import com.github.zabetak.calcite.tutorial.indexer.TpchTable;
 import com.github.zabetak.calcite.tutorial.rules.LuceneTableScanRule;
+import com.github.zabetak.calcite.tutorial.rules.LuceneToEnumerableConverterRule;
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -26,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Properties;
+
 import org.apache.calcite.DataContext;
 import org.apache.calcite.adapter.enumerable.EnumerableConvention;
 import org.apache.calcite.adapter.enumerable.EnumerableInterpretable;
@@ -160,6 +163,7 @@ public class LuceneQueryProcessor {
     planner.addRule(EnumerableRules.ENUMERABLE_AGGREGATE_RULE);
 
     planner.addRule(LuceneTableScanRule.DEFAULT.toRule());
+    planner.addRule(LuceneToEnumerableConverterRule.DEFAULT.toRule());
 
     // TODO 15. Define the type of the output plan (in this case we want a physical plan in
     // EnumerableContention)
