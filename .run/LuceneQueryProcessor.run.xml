@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="LuceneQueryProcessor" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="ALTERNATIVE_JRE_PATH" value="17" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="MAIN_CLASS_NAME" value="com.github.zabetak.calcite.tutorial.LuceneQueryProcessor" />
+    <module name="calcite-playground.tutorial.main" />
+    <option name="PROGRAM_PARAMETERS" value="queries/tpch/Q0.sql" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -16,8 +16,15 @@
  */
 package com.github.zabetak.calcite.tutorial;
 
+import com.github.zabetak.calcite.tutorial.indexer.DatasetIndexer;
+import com.github.zabetak.calcite.tutorial.indexer.TpchTable;
+import java.util.Collections;
+import java.util.Properties;
 import org.apache.calcite.DataContext;
 import org.apache.calcite.adapter.java.JavaTypeFactory;
+import org.apache.calcite.config.CalciteConnectionConfig;
+import org.apache.calcite.config.CalciteConnectionConfigImpl;
+import org.apache.calcite.config.CalciteConnectionProperty;
 import org.apache.calcite.jdbc.CalciteSchema;
 import org.apache.calcite.jdbc.JavaTypeFactoryImpl;
 import org.apache.calcite.linq4j.QueryProvider;
@@ -26,6 +33,8 @@ import org.apache.calcite.plan.RelOptCluster;
 import org.apache.calcite.plan.RelOptPlanner;
 import org.apache.calcite.plan.RelOptTable;
 import org.apache.calcite.plan.volcano.VolcanoPlanner;
+import org.apache.calcite.prepare.CalciteCatalogReader;
+import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rex.RexBuilder;
 import org.apache.calcite.schema.SchemaPlus;
@@ -33,6 +42,11 @@ import org.apache.calcite.schema.SchemaPlus;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import org.apache.calcite.sql.SqlNode;
+import org.apache.calcite.sql.fun.SqlStdOperatorTable;
+import org.apache.calcite.sql.parser.SqlParser;
+import org.apache.calcite.sql.validate.SqlValidator;
+import org.apache.calcite.sql.validate.SqlValidatorUtil;
 
 /**
  * Query processor for running TPC-H queries over Apache Lucene.
@@ -50,17 +64,44 @@ public class LuceneQueryProcessor {
     String sqlQuery = new String(Files.readAllBytes(Paths.get(args[0])), StandardCharsets.UTF_8);
 
     // TODO 1. Create the root schema and type factory
+    CalciteSchema schema = CalciteSchema.createRootSchema(false);
+    RelDataTypeFactory typeFactory = new JavaTypeFactoryImpl();
+
     // TODO 2. Create the data type for each TPC-H table
     // TODO 3. Add the TPC-H table to the schema
+    for (TpchTable table : TpchTable.values()) {
+      RelDataTypeFactory.Builder builder = new RelDataTypeFactory.Builder(typeFactory);
+      for (TpchTable.Column column : table.columns) {
+        RelDataType type = typeFactory.createJavaType(column.type);
+        builder.add(column.name, type.getSqlTypeName()).nullable(true);
+      }
+      String indexPath = DatasetIndexer.INDEX_LOCATION + "/tpch/" + table.name();
+      schema.add(table.name(), new LuceneTable(indexPath, builder.build()));
+    }
 
     // TODO 4. Create an SQL parser
+    SqlParser parser = SqlParser.create(sqlQuery);
     // TODO 5. Parse the query into an AST
     // TODO 6. Print and check the AST
+    SqlNode sqlNode = parser.parseQuery();
+    System.out.println("[Parsed query]");
+    System.out.println(sqlNode.toString());
 
     // TODO 7. Configure and instantiate the catalog reader
+    Properties props = new Properties();
+    props.setProperty(CalciteConnectionProperty.CASE_SENSITIVE.camelName(), "false");
+    CalciteConnectionConfig config = new CalciteConnectionConfigImpl(props);
+    CalciteCatalogReader catalogReader = new CalciteCatalogReader(schema,
+        Collections.singletonList("bs"), typeFactory, config);
+
     // TODO 8. Create the SQL validator using the standard operator table and default configuration
+    SqlValidator validator = SqlValidatorUtil.newValidator(SqlStdOperatorTable.instance(),
+        catalogReader, typeFactory, SqlValidator.Config.DEFAULT);
 
     // TODO 9. Validate the initial AST
+    SqlNode validNode = validator.validate(sqlNode);
+    System.out.println("[Validated query]");
+    System.out.println(validNode.toString());
 
     // TODO 10. Create the optimization cluster to maintain planning information
     // TODO 11. Configure and instantiate the converter of the AST to Logical plan
@@ -102,25 +143,30 @@ public class LuceneQueryProcessor {
    * A simple data context only with schema information.
    */
   private static final class SchemaOnlyDataContext implements DataContext {
+
     private final SchemaPlus schema;
 
     SchemaOnlyDataContext(CalciteSchema calciteSchema) {
       this.schema = calciteSchema.plus();
     }
 
-    @Override public SchemaPlus getRootSchema() {
+    @Override
+    public SchemaPlus getRootSchema() {
       return schema;
     }
 
-    @Override public JavaTypeFactory getTypeFactory() {
+    @Override
+    public JavaTypeFactory getTypeFactory() {
       return new JavaTypeFactoryImpl();
     }
 
-    @Override public QueryProvider getQueryProvider() {
+    @Override
+    public QueryProvider getQueryProvider() {
       return null;
     }
 
-    @Override public Object get(final String name) {
+    @Override
+    public Object get(final String name) {
       return null;
     }
   }
