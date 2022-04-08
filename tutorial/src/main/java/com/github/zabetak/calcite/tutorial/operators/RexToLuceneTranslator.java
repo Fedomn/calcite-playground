@@ -17,16 +17,25 @@
 package com.github.zabetak.calcite.tutorial.operators;
 
 import org.apache.calcite.rel.core.Filter;
+import org.apache.calcite.rel.metadata.RelMetadataQuery;
+import org.apache.calcite.rel.type.RelDataTypeField;
+import org.apache.calcite.rex.RexCall;
+import org.apache.calcite.rex.RexInputRef;
+import org.apache.calcite.rex.RexLiteral;
+import org.apache.calcite.rex.RexTableInputRef;
+import org.apache.calcite.rex.RexVisitorImpl;
+import org.apache.lucene.document.IntPoint;
 import org.apache.lucene.search.Query;
 
 /**
  * Translate row expressions ({@link org.apache.calcite.rex.RexNode}) to Apache Lucene queries
  * ({@link Query}).
- *
+ * <p>
  * The translator assumes the expression is in some normalized form. At its current state it cannot
  * translate arbitrary Calcite expressions.
  */
-public final class RexToLuceneTranslator {
+public final class RexToLuceneTranslator extends RexVisitorImpl<Query> {
+
   // TODO 1. Extend RexVisitorImpl<Query>
   // TODO 2. Override and implement visitCall
   // TODO 3. Ensure call.getKind() corresponds to equals operator
@@ -43,7 +52,28 @@ public final class RexToLuceneTranslator {
   private final Filter filter;
 
   private RexToLuceneTranslator(Filter filter) {
+    super(false);
     this.filter = filter;
+  }
+
+  @Override
+  public Query visitCall(final RexCall call) {
+    switch (call.getKind()) {
+    case EQUALS:
+      RexInputRef colRef = (RexInputRef) call.operands.get(0);
+      RexLiteral literal = (RexLiteral) call.operands.get(1);
+      RelMetadataQuery mq = filter.getCluster().getMetadataQuery();
+      RexTableInputRef col = (RexTableInputRef)
+          mq.getExpressionLineage(filter.getInput(), colRef).stream().findFirst().get();
+      RelDataTypeField typeField = col.getTableRef().getTable().getRowType().getFieldList()
+          .get(col.getTableRef().getEntityNumber());
+
+      switch (typeField.getType().getSqlTypeName()) {
+      case INTEGER:
+        return IntPoint.newExactQuery(typeField.getName(), literal.getValueAs(Integer.class));
+      }
+    }
+    throw new AssertionError("Expression " + call + " cannot be translated to Lucene query");
   }
 
   /**
@@ -51,7 +81,6 @@ public final class RexToLuceneTranslator {
    */
   public static Query translate(Filter filter) {
     RexToLuceneTranslator translator = new RexToLuceneTranslator(filter);
-    throw new AssertionError("Not implemented yet");
-    // TODO 12. Remove the assertion error and aply the translator to the filter condition.
+    return filter.getCondition().accept(translator);
   }
 }

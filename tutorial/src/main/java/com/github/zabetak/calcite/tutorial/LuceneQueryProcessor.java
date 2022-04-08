@@ -18,6 +18,7 @@ package com.github.zabetak.calcite.tutorial;
 
 import com.github.zabetak.calcite.tutorial.indexer.DatasetIndexer;
 import com.github.zabetak.calcite.tutorial.indexer.TpchTable;
+import com.github.zabetak.calcite.tutorial.rules.LuceneFilterRule;
 import com.github.zabetak.calcite.tutorial.rules.LuceneTableScanRule;
 import com.github.zabetak.calcite.tutorial.rules.LuceneToEnumerableConverterRule;
 
@@ -162,6 +163,7 @@ public class LuceneQueryProcessor {
     planner.addRule(EnumerableRules.ENUMERABLE_JOIN_RULE);
     planner.addRule(EnumerableRules.ENUMERABLE_AGGREGATE_RULE);
 
+    planner.addRule(LuceneFilterRule.DEFAULT.toRule());
     planner.addRule(LuceneTableScanRule.DEFAULT.toRule());
     planner.addRule(LuceneToEnumerableConverterRule.DEFAULT.toRule());
 

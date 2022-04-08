@@ -16,19 +16,44 @@
  */
 package com.github.zabetak.calcite.tutorial.operators;
 
+import org.apache.calcite.plan.RelOptCluster;
+import org.apache.calcite.plan.RelTraitSet;
+import org.apache.calcite.rel.RelNode;
 import org.apache.calcite.rel.core.Filter;
 import org.apache.calcite.rex.RexNode;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 
 /**
  * Implementation of {@link Filter} in {@link LuceneRel#LUCENE} convention.
- *
+ * <p>
  * The expression knows how to transform a filter condition in Calcite's {@link RexNode}
  * representation to the respective {@link Query} object in Lucene.
  */
-public class LuceneFilter {
+public class LuceneFilter extends Filter implements LuceneRel {
+
   // TODO 1. Extend Filter operator
   // TODO 2. Implement LuceneRel interface
   // TODO 3. Implement LuceneRel#implement method
   // TODO 4. Override Filter#copy method
+  public LuceneFilter(RelOptCluster cluster, RelNode child, RexNode condition) {
+    super(cluster, cluster.traitSetOf(LUCENE), child, condition);
+  }
+
+  @Override
+  public Result implement() {
+    Result r = ((LuceneRel) getInput()).implement();
+    Query q = RexToLuceneTranslator.translate(this);
+    BooleanQuery booleanQuery = new BooleanQuery.Builder()
+        .add(q, BooleanClause.Occur.MUST)
+        .add(r.query, BooleanClause.Occur.MUST)
+        .build();
+    return new Result(r.indexPath, booleanQuery);
+  }
+
+  @Override
+  public Filter copy(RelTraitSet traitSet, RelNode input, RexNode condition) {
+    return new LuceneFilter(input.getCluster(), input, condition);
+  }
 }

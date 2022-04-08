@@ -17,20 +17,27 @@
 package com.github.zabetak.calcite.tutorial.rules;
 
 import org.apache.calcite.rel.core.Filter;
+import org.apache.calcite.rel.metadata.RelMetadataQuery;
+import org.apache.calcite.rex.RexCall;
+import org.apache.calcite.rex.RexInputRef;
+import org.apache.calcite.rex.RexLiteral;
+import org.apache.calcite.rex.RexVisitorImpl;
+import org.apache.calcite.sql.SqlKind;
+import org.apache.calcite.sql.type.SqlTypeName;
 
 /**
  * Visitor checking whether a filter can be pushed in Lucene.
- *
+ * <p>
  * The filter can be pushed in Lucene if it is of the following form.
  *
  * <pre>{@code
  * =($0, 154)
  * }</pre>
- *
+ * <p>
  * A single equality operator with input reference on the left side and an integer literal on the
  * right side. The input reference should be resolvable to an actual column of the table.
  */
-public final class LuceneFilterChecker {
+public final class LuceneFilterChecker extends RexVisitorImpl<Boolean> {
   // TODO 1. Extend RexVisitorImpl<Boolean>
   // TODO 2. Override and implement visitCall method
   // TODO 3. Ensure call.getKind() corresponds to equals operator
@@ -45,10 +52,33 @@ public final class LuceneFilterChecker {
   // c. Use literal.getType().getSqlTypeName to check the type
   // TODO 6. Combine results from visitors in step 4 and 5 and pay attention to potential
   // null values.
+
   private final Filter filter;
 
   private LuceneFilterChecker(Filter filter) {
+    super(false);
     this.filter = filter;
+  }
+
+  @Override
+  public Boolean visitCall(final RexCall call) {
+    if (call.getKind().equals(SqlKind.EQUALS)) {
+      Boolean isValidInput = call.operands.get(0).accept(new RexVisitorImpl<Boolean>(false) {
+        @Override
+        public Boolean visitInputRef(final RexInputRef inputRef) {
+          return RelMetadataQuery.instance().getExpressionLineage(filter.getInput(), inputRef)
+              != null;
+        }
+      });
+      Boolean isValidLiteral = call.operands.get(1).accept(new RexVisitorImpl<Boolean>(false) {
+        @Override
+        public Boolean visitLiteral(final RexLiteral literal) {
+          return SqlTypeName.INTEGER.equals(literal.getType().getSqlTypeName());
+        }
+      });
+      return Boolean.TRUE.equals(isValidInput) && Boolean.TRUE.equals(isValidLiteral);
+    }
+    return Boolean.FALSE;
   }
 
   /**
@@ -56,8 +86,6 @@ public final class LuceneFilterChecker {
    */
   public static boolean isPushable(Filter filter) {
     LuceneFilterChecker checker = new LuceneFilterChecker(filter);
-    // TODO 7. Finalize isPushable method by exploiting the visitor
-    return Boolean.FALSE;
-    //    return Boolean.TRUE.equals(filter.getCondition().accept(checker));
+    return Boolean.TRUE.equals(filter.getCondition().accept(checker));
   }
 }
