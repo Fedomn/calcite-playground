@@ -46,6 +46,7 @@ import org.apache.calcite.plan.RelOptUtil;
 import org.apache.calcite.plan.volcano.VolcanoPlanner;
 import org.apache.calcite.prepare.CalciteCatalogReader;
 import org.apache.calcite.rel.RelNode;
+import org.apache.calcite.rel.rules.CoreRules;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rex.RexBuilder;
@@ -149,9 +150,10 @@ public class LuceneQueryProcessor {
 
     // TODO 14. Initialize optimizer/planner with the necessary rules
     RelOptPlanner planner = cluster.getPlanner();
+    planner.addRule(CoreRules.FILTER_TO_CALC);
+    planner.addRule(CoreRules.PROJECT_TO_CALC);
     planner.addRule(EnumerableRules.ENUMERABLE_SORT_RULE);
-    planner.addRule(EnumerableRules.ENUMERABLE_PROJECT_RULE);
-    planner.addRule(EnumerableRules.ENUMERABLE_FILTER_RULE);
+    planner.addRule(EnumerableRules.ENUMERABLE_CALC_RULE);
     planner.addRule(EnumerableRules.ENUMERABLE_JOIN_RULE);
     planner.addRule(EnumerableRules.ENUMERABLE_TABLE_SCAN_RULE);
 
