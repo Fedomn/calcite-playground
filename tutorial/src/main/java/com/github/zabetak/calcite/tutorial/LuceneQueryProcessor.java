@@ -16,20 +16,6 @@
  */
 package com.github.zabetak.calcite.tutorial;
 
-import com.github.zabetak.calcite.tutorial.indexer.DatasetIndexer;
-import com.github.zabetak.calcite.tutorial.indexer.TpchTable;
-import com.github.zabetak.calcite.tutorial.rules.LuceneFilterRule;
-import com.github.zabetak.calcite.tutorial.rules.LuceneTableScanRule;
-import com.github.zabetak.calcite.tutorial.rules.LuceneToEnumerableConverterRule;
-
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Properties;
-
 import org.apache.calcite.DataContext;
 import org.apache.calcite.adapter.enumerable.EnumerableConvention;
 import org.apache.calcite.adapter.enumerable.EnumerableInterpretable;
@@ -48,6 +34,7 @@ import org.apache.calcite.plan.RelOptCluster;
 import org.apache.calcite.plan.RelOptPlanner;
 import org.apache.calcite.plan.RelOptTable;
 import org.apache.calcite.plan.RelOptUtil;
+import org.apache.calcite.plan.visualizer.RuleMatchVisualizer;
 import org.apache.calcite.plan.volcano.VolcanoPlanner;
 import org.apache.calcite.prepare.CalciteCatalogReader;
 import org.apache.calcite.rel.RelNode;
@@ -66,6 +53,20 @@ import org.apache.calcite.sql.validate.SqlValidator;
 import org.apache.calcite.sql.validate.SqlValidatorUtil;
 import org.apache.calcite.sql2rel.SqlToRelConverter;
 import org.apache.calcite.sql2rel.StandardConvertletTable;
+
+import com.github.zabetak.calcite.tutorial.indexer.DatasetIndexer;
+import com.github.zabetak.calcite.tutorial.indexer.TpchTable;
+import com.github.zabetak.calcite.tutorial.rules.LuceneFilterRule;
+import com.github.zabetak.calcite.tutorial.rules.LuceneTableScanRule;
+import com.github.zabetak.calcite.tutorial.rules.LuceneToEnumerableConverterRule;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * Query processor for running TPC-H queries over Apache Lucene.
@@ -127,9 +128,13 @@ public class LuceneQueryProcessor {
     //-----------------------------step 2: use SqlToRelConverter to generate LogicalPlan------------------------------------------------
 
     // TODO 10. Create the optimization cluster to maintain planning information
-    RelOptPlanner volcanoPlanner = new VolcanoPlanner();
+    VolcanoPlanner volcanoPlanner = new VolcanoPlanner();
+//    volcanoPlanner.setTopDownOpt(true);
     volcanoPlanner.addRelTraitDef(ConventionTraitDef.INSTANCE);
     RelOptCluster cluster = RelOptCluster.create(volcanoPlanner, new RexBuilder(typeFactory));
+
+    RuleMatchVisualizer viz = new RuleMatchVisualizer("./", "");
+    viz.attachTo(volcanoPlanner);
 
     // TODO 11. Configure and instantiate the converter of the AST to Logical plan
     // - No view expansion (use NOOP_EXPANDER)
@@ -200,14 +205,6 @@ public class LuceneQueryProcessor {
     long finish = System.currentTimeMillis();
     System.out.println("Elapsed time " + (finish - start) + "ms");
   }
-
-  private static RelOptCluster newCluster(RelDataTypeFactory factory) {
-    RelOptPlanner planner = new VolcanoPlanner();
-    planner.addRelTraitDef(ConventionTraitDef.INSTANCE);
-    return RelOptCluster.create(planner, new RexBuilder(factory));
-  }
-
-  private static final RelOptTable.ViewExpander NOOP_EXPANDER = (type, query, schema, path) -> null;
 
   /**
    * A simple data context only with schema information.
