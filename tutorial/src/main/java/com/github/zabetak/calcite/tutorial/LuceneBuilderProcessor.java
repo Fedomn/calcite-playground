@@ -16,6 +16,13 @@
  */
 package com.github.zabetak.calcite.tutorial;
 
+import com.github.zabetak.calcite.tutorial.indexer.DatasetIndexer;
+import com.github.zabetak.calcite.tutorial.indexer.TpchTable;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Properties;
 import org.apache.calcite.DataContext;
 import org.apache.calcite.adapter.enumerable.EnumerableConvention;
 import org.apache.calcite.adapter.enumerable.EnumerableInterpretable;
@@ -45,16 +52,8 @@ import org.apache.calcite.schema.SchemaPlus;
 import org.apache.calcite.sql.SqlExplainFormat;
 import org.apache.calcite.sql.SqlExplainLevel;
 import org.apache.calcite.sql.dialect.AnsiSqlDialect;
+import org.apache.calcite.sql.fun.SqlStdOperatorTable;
 import org.apache.calcite.tools.RelBuilder;
-
-import com.github.zabetak.calcite.tutorial.indexer.DatasetIndexer;
-import com.github.zabetak.calcite.tutorial.indexer.TpchTable;
-
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Properties;
 
 /**
  * Query processor for running TPC-H queries over Apache Lucene using the {@link RelBuilder} API.
@@ -72,10 +71,10 @@ public class LuceneBuilderProcessor {
       for (TpchTable.Column c : tpchTable.columns) {
         typeBuilder.add(c.name, typeFactory.createJavaType(c.type).getSqlTypeName());
       }
-      String indexPath =
-          Paths.get(DatasetIndexer.INDEX_LOCATION, "tpch", tpchTable.name()).toString();
+      String indexPath = Paths.get(DatasetIndexer.INDEX_LOCATION, "tpch", tpchTable.name())
+          .toString();
       // TODO 1. Uncomment the following line to add table to the schema
-      // schema.add(tpchTable.name(), new LuceneScannableTable(indexPath, typeBuilder.build()));
+      schema.add(tpchTable.name(), new LuceneTable(indexPath, typeBuilder.build()));
     }
 
     RelOptCluster cluster = newCluster(typeFactory);
@@ -83,17 +82,18 @@ public class LuceneBuilderProcessor {
     props.setProperty(CalciteConnectionProperty.CASE_SENSITIVE.camelName(), "false");
     CalciteConnectionConfig config = new CalciteConnectionConfigImpl(props);
     CalciteCatalogReader catalogReader = new CalciteCatalogReader(schema,
-        Collections.singletonList(""),
-        typeFactory, config);
+        Collections.singletonList(""), typeFactory, config);
 
     RelBuilder builder = new RelBuilder(Contexts.EMPTY_CONTEXT, cluster, catalogReader) {
     };
     // TODO 2. Use the RelBuilder to create directly a logical plan for execution
+    builder.scan("orders").filter(
+        builder.call(SqlStdOperatorTable.GREATER_THAN, builder.field("o_totalprice"),
+            builder.literal(220388.06))).aggregate(builder.groupKey("o_custkey"), builder.count());
     RelNode logPlan = builder.build();
     // Display the logical plan
-    System.out.println(
-        RelOptUtil.dumpPlan("[Logical plan]", logPlan, SqlExplainFormat.TEXT,
-            SqlExplainLevel.NON_COST_ATTRIBUTES));
+    System.out.println(RelOptUtil.dumpPlan("[Logical plan]", logPlan, SqlExplainFormat.TEXT,
+        SqlExplainLevel.NON_COST_ATTRIBUTES));
 
     RelToSqlConverter relToSqlConverter = new RelToSqlConverter(AnsiSqlDialect.DEFAULT);
     System.out.println(relToSqlConverter.visitRoot(logPlan).asStatement().toString());
@@ -153,25 +153,30 @@ public class LuceneBuilderProcessor {
    * A simple data context only with schema information.
    */
   private static final class SchemaOnlyDataContext implements DataContext {
+
     private final SchemaPlus schema;
 
     SchemaOnlyDataContext(CalciteSchema calciteSchema) {
       this.schema = calciteSchema.plus();
     }
 
-    @Override public SchemaPlus getRootSchema() {
+    @Override
+    public SchemaPlus getRootSchema() {
       return schema;
     }
 
-    @Override public JavaTypeFactory getTypeFactory() {
+    @Override
+    public JavaTypeFactory getTypeFactory() {
       return new JavaTypeFactoryImpl();
     }
 
-    @Override public QueryProvider getQueryProvider() {
+    @Override
+    public QueryProvider getQueryProvider() {
       return null;
     }
 
-    @Override public Object get(final String name) {
+    @Override
+    public Object get(final String name) {
       return null;
     }
   }
