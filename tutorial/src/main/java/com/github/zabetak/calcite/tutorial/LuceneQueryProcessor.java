@@ -156,6 +156,7 @@ public class LuceneQueryProcessor {
     planner.addRule(EnumerableRules.ENUMERABLE_CALC_RULE);
     planner.addRule(EnumerableRules.ENUMERABLE_JOIN_RULE);
     planner.addRule(EnumerableRules.ENUMERABLE_TABLE_SCAN_RULE);
+    planner.addRule(EnumerableRules.ENUMERABLE_AGGREGATE_RULE);
 
     // TODO 15. Define the type of the output plan (in this case we want a physical plan in
     // EnumerableContention)
