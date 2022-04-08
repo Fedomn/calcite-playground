@@ -18,6 +18,9 @@ package com.github.zabetak.calcite.tutorial;
 
 import com.github.zabetak.calcite.tutorial.indexer.DatasetIndexer;
 import com.github.zabetak.calcite.tutorial.indexer.TpchTable;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Properties;
 import org.apache.calcite.DataContext;
@@ -32,21 +35,23 @@ import org.apache.calcite.plan.ConventionTraitDef;
 import org.apache.calcite.plan.RelOptCluster;
 import org.apache.calcite.plan.RelOptPlanner;
 import org.apache.calcite.plan.RelOptTable;
+import org.apache.calcite.plan.RelOptUtil;
 import org.apache.calcite.plan.volcano.VolcanoPlanner;
 import org.apache.calcite.prepare.CalciteCatalogReader;
+import org.apache.calcite.rel.RelNode;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rex.RexBuilder;
 import org.apache.calcite.schema.SchemaPlus;
-
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import org.apache.calcite.sql.SqlExplainFormat;
+import org.apache.calcite.sql.SqlExplainLevel;
 import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.fun.SqlStdOperatorTable;
 import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.calcite.sql.validate.SqlValidator;
 import org.apache.calcite.sql.validate.SqlValidatorUtil;
+import org.apache.calcite.sql2rel.SqlToRelConverter;
+import org.apache.calcite.sql2rel.StandardConvertletTable;
 
 /**
  * Query processor for running TPC-H queries over Apache Lucene.
@@ -62,6 +67,8 @@ public class LuceneQueryProcessor {
       System.exit(-1);
     }
     String sqlQuery = new String(Files.readAllBytes(Paths.get(args[0])), StandardCharsets.UTF_8);
+
+    //-----------------------------step 1------------------------------------------------
 
     // TODO 1. Create the root schema and type factory
     CalciteSchema schema = CalciteSchema.createRootSchema(false);
@@ -103,14 +110,32 @@ public class LuceneQueryProcessor {
     System.out.println("[Validated query]");
     System.out.println(validNode.toString());
 
+    //-----------------------------step 2------------------------------------------------
+
     // TODO 10. Create the optimization cluster to maintain planning information
+    RelOptPlanner planner = new VolcanoPlanner();
+    planner.addRelTraitDef(ConventionTraitDef.INSTANCE);
+    RelOptCluster cluster = RelOptCluster.create(planner, new RexBuilder(typeFactory));
+
     // TODO 11. Configure and instantiate the converter of the AST to Logical plan
     // - No view expansion (use NOOP_EXPANDER)
+    RelOptTable.ViewExpander NOOP_EXPANDER = (rowType, queryString, schemaPath, viewPath) -> null;
     // - Standard expression normalization (use StandardConvertletTable.INSTANCE)
     // - Default configuration (SqlToRelConverter.config())
+    SqlToRelConverter relConverter = new SqlToRelConverter(
+        NOOP_EXPANDER,
+        validator,
+        catalogReader,
+        cluster,
+        StandardConvertletTable.INSTANCE,
+        SqlToRelConverter.config());
 
     // TODO 12. Convert the valid AST into a logical plan
+    RelNode logPlan = relConverter.convertQuery(validNode, false, true).rel;
     // TODO 13. Display the logical plan with explain attributes
+    System.out.println(
+        RelOptUtil.dumpPlan("[Logical plan]", logPlan, SqlExplainFormat.TEXT,
+            SqlExplainLevel.NON_COST_ATTRIBUTES));
 
     // TODO 14. Initialize optimizer/planner with the necessary rules
 
