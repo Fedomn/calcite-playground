@@ -6,7 +6,7 @@ Calcite playground for learning purposes includes some testing code.
 
 ### My Personal Resources
 
-- [Calcite tutorial at BOSS 2021 完成的demo](https://github.com/Fedomn/calcite-tutorial)
+- [Calcite tutorial at BOSS 2021 finished demo](https://github.com/Fedomn/calcite-playground/blob/main/tutorial/src/main/java/com/github/zabetak/calcite/tutorial/LuceneQueryProcessor.java)
 - [Calcite Blog Tags](https://frankma.netlify.app/tags/calcite/)
 
 ### English Resources
