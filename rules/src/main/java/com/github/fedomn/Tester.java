@@ -12,6 +12,7 @@ import org.apache.calcite.plan.RelOptCluster;
 import org.apache.calcite.plan.RelOptRule;
 import org.apache.calcite.plan.RelOptTable;
 import org.apache.calcite.plan.RelOptUtil;
+import org.apache.calcite.plan.hep.HepMatchOrder;
 import org.apache.calcite.plan.hep.HepPlanner;
 import org.apache.calcite.plan.hep.HepProgramBuilder;
 import org.apache.calcite.plan.volcano.VolcanoPlanner;
@@ -138,7 +139,7 @@ public class Tester {
     // Optimizer Part
     HepProgramBuilder hepProgramBuilder = new HepProgramBuilder();
     for (final RelOptRule rule : rules) {
-      hepProgramBuilder.addRuleInstance(rule);
+      hepProgramBuilder.addMatchOrder(HepMatchOrder.TOP_DOWN).addRuleInstance(rule);
     }
     HepPlanner hepPlanner = new HepPlanner(hepProgramBuilder.build());
     hepPlanner.setRoot(logicalPlan);
