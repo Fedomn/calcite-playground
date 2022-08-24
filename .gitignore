@@ -3,3 +3,4 @@
 build
 target
 planner-viz*
+!.idea/breakpointManagerConfig.xml

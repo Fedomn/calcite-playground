@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BreakpointManagerConfig">
+    <option name="entities">
+      <map>
+        <entry>
+          <key>
+            <breakpoints-set-info>
+              <option name="id" value="b0919b02-f859-4356-ae3b-0cb36c7f0b2d" />
+              <option name="name" value="HepPlanner" />
+            </breakpoints-set-info>
+          </key>
+          <value>
+            <list>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/rel/rules/ProjectToCalcRule.java" />
+                <option name="line" value="61" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="file://$PROJECT_DIR$/tutorial/src/main/java/com/github/zabetak/calcite/tutorial/LuceneQueryProcessor.java" />
+                <option name="line" value="130" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="file://$PROJECT_DIR$/rules/src/main/java/com/github/fedomn/Tester.java" />
+                <option name="line" value="145" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/hep/HepPlanner.java" />
+                <option name="line" value="163" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/hep/HepPlanner.java" />
+                <option name="line" value="188" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/hep/HepPlanner.java" />
+                <option name="line" value="208" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/hep/HepPlanner.java" />
+                <option name="line" value="210" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/hep/HepPlanner.java" />
+                <option name="line" value="239" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/RelOptRuleOperand.java" />
+                <option name="line" value="279" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/AbstractRelOptPlanner.java" />
+                <option name="line" value="311" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/AbstractRelOptPlanner.java" />
+                <option name="line" value="336" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/hep/HepPlanner.java" />
+                <option name="line" value="394" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/hep/HepPlanner.java" />
+                <option name="line" value="414" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/hep/HepPlanner.java" />
+                <option name="line" value="500" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/hep/HepPlanner.java" />
+                <option name="line" value="531" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/hep/HepPlanner.java" />
+                <option name="line" value="618" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/hep/HepPlanner.java" />
+                <option name="line" value="728" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/hep/HepPlanner.java" />
+                <option name="line" value="750" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/hep/HepPlanner.java" />
+                <option name="line" value="776" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/plan/hep/HepPlanner.java" />
+                <option name="line" value="939" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+              <breakpoint-info>
+                <option name="enabled" value="true" />
+                <option name="fileUrl" value="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.calcite/calcite-core/1.30.0/71ee6e63ef4bfab0afe5bc83915ea9c39049b22d/calcite-core-1.30.0-sources.jar!/org/apache/calcite/rel/rules/CalcMergeRule.java" />
+                <option name="line" value="58" />
+                <option name="typeId" value="java-line" />
+              </breakpoint-info>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
