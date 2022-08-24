@@ -1,4 +1,4 @@
-package com.github.fedomn;
+package com.github.fedomn.calc;
 
 import org.apache.calcite.rel.rules.CoreRules;
 import org.apache.calcite.sql.parser.SqlParseException;
