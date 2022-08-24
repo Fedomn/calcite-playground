@@ -6,6 +6,8 @@ import org.apache.calcite.sql.parser.SqlParseException;
 import static com.github.fedomn.Tester.printOptimizeBeforeAfter;
 
 // in sql-query-engine-rs pattern: BoundExpr to InputRef
+// The Calc is a special operator that combines the functionality of Project and Filter operators
+// and performs the common sub-expression elimination.
 public class ProjectToCalcRule {
   public static void main(String[] args) throws SqlParseException {
 
