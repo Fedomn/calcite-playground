@@ -95,7 +95,7 @@ public class Tester {
 
     var rolesType = new RelDataTypeFactory.Builder(typeFactory);
     rolesType.add("id", SqlTypeName.INTEGER);
-    rolesType.add("name", SqlTypeName.VARCHAR);
+    rolesType.add("role_name", SqlTypeName.VARCHAR);
     var rolesTable = new MemTable(rolesType.build(), ROLES_DATA);
     schema.add("t_roles", rolesTable);
 
