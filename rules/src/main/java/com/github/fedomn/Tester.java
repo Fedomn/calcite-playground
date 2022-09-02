@@ -138,8 +138,9 @@ public class Tester {
 
     // Optimizer Part
     HepProgramBuilder hepProgramBuilder = new HepProgramBuilder();
+    hepProgramBuilder.addMatchOrder(HepMatchOrder.TOP_DOWN);
     for (final RelOptRule rule : rules) {
-      hepProgramBuilder.addMatchOrder(HepMatchOrder.TOP_DOWN).addRuleInstance(rule);
+      hepProgramBuilder.addRuleInstance(rule);
     }
     HepPlanner hepPlanner = new HepPlanner(hepProgramBuilder.build());
     hepPlanner.setRoot(logicalPlan);
